@@ -47,4 +47,6 @@ export type RootStackParamList = {
   Booking: undefined;
   Trip: { ride: Ride };
   Profile: undefined;
+  Login: undefined;
+  Signup: undefined;
 };
