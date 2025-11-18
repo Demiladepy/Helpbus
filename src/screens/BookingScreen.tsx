@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, ActivityIndicator, Animated, TextInput, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList, Location, Ride, Driver } from '../types';
@@ -8,6 +8,7 @@ import MapViewComponent from '../components/MapViewComponent';
 import AccessibilityOptions from '../components/AccessibilityOptions';
 import DriverCard from '../components/DriverCard';
 import { FirebaseService } from '../services/firebaseService';
+import { geocodeAsync } from 'expo-location';
 
 type BookingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Booking'>;
 
@@ -187,6 +188,35 @@ export default function BookingScreen({ navigation }: Props) {
             </View>
           </View>
         )}
+
+        {/* Location Inputs */}
+        <View style={[styles.inputContainer, highContrast && styles.inputContainerHighContrast]}>
+          <Text style={[styles.inputLabel, { fontSize: getFontSize(14), color: getColor('#6B7280', '#000') }]}>
+            Pickup Location
+          </Text>
+          <TextInput
+            style={[styles.textInput, { fontSize: getFontSize(16), color: getColor('#1F2937', '#000') }]}
+            value={pickup.address}
+            onChangeText={(text) => setPickup({ ...pickup, address: text })}
+            placeholder="Enter pickup address"
+            accessibilityLabel="Pickup location input"
+            keyboardType="default"
+          />
+        </View>
+
+        <View style={[styles.inputContainer, highContrast && styles.inputContainerHighContrast]}>
+          <Text style={[styles.inputLabel, { fontSize: getFontSize(14), color: getColor('#6B7280', '#000') }]}>
+            Drop-off Location
+          </Text>
+          <TextInput
+            style={[styles.textInput, { fontSize: getFontSize(16), color: getColor('#1F2937', '#000') }]}
+            value={dropoff.address}
+            onChangeText={(text) => setDropoff({ ...dropoff, address: text })}
+            placeholder="Enter drop-off address"
+            accessibilityLabel="Drop-off location input"
+            keyboardType="default"
+          />
+        </View>
 
         {/* Accessibility Options */}
         <AccessibilityOptions
@@ -459,5 +489,31 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: '#FFF',
     fontWeight: '700',
+  },
+  inputContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  inputContainerHighContrast: {
+    borderWidth: 3,
+    borderColor: '#000',
+  },
+  inputLabel: {
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: '#F9FAFB',
   },
 });
