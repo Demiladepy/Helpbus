@@ -14,6 +14,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import AccessibilityScreen from '../screens/AccessibilityScreen';
 import DriverDashboard from '../screens/DriverDashboard';
 import DriverSettingsScreen from '../screens/DriverSettingsScreen';
+import PaymentScreen from '../screens/PaymentScreen';
 import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,6 +49,7 @@ function BookingStack() {
       }}
     >
       <Stack.Screen name="BookingMain" component={BookingScreen} options={{ title: 'Book a Ride' }} />
+      <Stack.Screen name="Payment" component={PaymentScreen} options={{ title: 'Payment' }} />
       <Stack.Screen name="Trip" component={TripScreen} options={{ title: 'Your Trip', headerBackVisible: false }} />
     </Stack.Navigator>
   );

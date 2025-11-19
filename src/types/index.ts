@@ -146,6 +146,7 @@ export type RootStackParamList = {
   HomeMain: undefined;
   Booking: undefined;
   BookingMain: undefined;
+  Payment: { fare: number; pickup?: Location; dropoff?: Location } | undefined;
   Trip: { ride: Ride };
   TripHistory: undefined;
   TripHistoryMain: undefined;
