@@ -141,6 +141,34 @@ export interface BookRideResponse {
   status: string;
 }
 
+export type HomeStackParamList = {
+  HomeMain: undefined;
+  Accessibility: undefined;
+};
+
+export type BookingStackParamList = {
+  BookingMain: undefined;
+  DriverSelection: { rideId?: string; accessibilityOptions?: string[]; fare: number; pickup: Location; dropoff: Location };
+  Payment: { fare: number; pickup?: Location; dropoff?: Location; rideId: string; driverId: string } | undefined;
+  Trip: { ride: Ride };
+};
+
+export type TripHistoryStackParamList = {
+  TripHistoryMain: undefined;
+  Trip: { ride: Ride };
+};
+
+export type ProfileStackParamList = {
+  ProfileMain: undefined;
+  Accessibility: undefined;
+};
+
+export type DriverStackParamList = {
+  DriverDashboardMain: undefined;
+  Trip: { ride: Ride };
+  DriverSettings: undefined;
+};
+
 export type RootStackParamList = {
   Home: undefined;
   HomeMain: undefined;

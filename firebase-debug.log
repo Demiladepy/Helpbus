@@ -106,3 +106,146 @@
 [error] Error: Your project helpbus-b7124 must be on the Blaze (pay-as-you-go) plan to complete this command. Required API artifactregistry.googleapis.com can't be enabled until the upgrade is complete. To upgrade, visit the following URL:
 
 https://console.firebase.google.com/project/helpbus-b7124/usage/details
+[debug] [2025-11-20T10:54:45.608Z] ----------------------------------------------------------------------
+[debug] [2025-11-20T10:54:45.612Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\DELLL\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore:rules
+[debug] [2025-11-20T10:54:45.612Z] CLI Version:   14.25.0
+[debug] [2025-11-20T10:54:45.613Z] Platform:      win32
+[debug] [2025-11-20T10:54:45.613Z] Node Version:  v22.13.0
+[debug] [2025-11-20T10:54:45.613Z] Time:          Thu Nov 20 2025 11:54:45 GMT+0100 (West Africa Standard Time)
+[debug] [2025-11-20T10:54:45.613Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-20T10:54:46.062Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-20T10:54:46.063Z] > authorizing via signed-in user (marvellousabiola08@gmail.com)
+[debug] [2025-11-20T10:54:46.063Z] [iam] checking project helpbus-b7124 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2025-11-20T10:54:46.064Z] Checked if tokens are valid: false, expires at: 1763622540296
+[debug] [2025-11-20T10:54:46.064Z] Checked if tokens are valid: false, expires at: 1763622540296
+[debug] [2025-11-20T10:54:46.065Z] > refreshing access token with scopes: []
+[debug] [2025-11-20T10:54:46.067Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-11-20T10:54:46.067Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-20T10:54:46.784Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-11-20T10:54:46.785Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-11-20T10:54:47.084Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions [none]
+[debug] [2025-11-20T10:54:47.085Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions x-goog-quota-user=projects/helpbus-b7124
+[debug] [2025-11-20T10:54:47.085Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2025-11-20T10:54:48.481Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions 200
+[debug] [2025-11-20T10:54:48.482Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'helpbus-b7124'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2025-11-20T10:54:48.494Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:48.495Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:48.495Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/helpbus-b7124/databases/(default) [none]
+[debug] [2025-11-20T10:54:49.687Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/helpbus-b7124/databases/(default) 200
+[debug] [2025-11-20T10:54:49.687Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/helpbus-b7124/databases/(default) {"name":"projects/helpbus-b7124/databases/(default)","uid":"4688c898-34e7-42ec-b2e8-4a70a8a0619d","createTime":"2025-11-18T10:26:05.697492Z","updateTime":"2025-11-18T10:26:05.697492Z","locationId":"nam5","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-11-20T09:54:48.722569Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"s","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IOeg07TIgJEDMLCzz5rG+5AD"}
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-11-20T10:54:49.690Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:49.690Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:49.690Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test [none]
+[debug] [2025-11-20T10:54:49.690Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test [omitted]
+[debug] [2025-11-20T10:54:51.204Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test 200
+[debug] [2025-11-20T10:54:51.205Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-11-20T10:54:51.206Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:51.206Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:51.206Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases pageSize=10&pageToken=
+[debug] [2025-11-20T10:54:51.630Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases 200
+[debug] [2025-11-20T10:54:51.631Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases {"releases":[{"name":"projects/helpbus-b7124/releases/cloud.firestore","rulesetName":"projects/helpbus-b7124/rulesets/af6704d3-6aba-4611-bcee-b2ec12434e20","createTime":"2025-11-18T10:26:11.614564Z","updateTime":"2025-11-20T06:11:02.382284Z"}]}
+[debug] [2025-11-20T10:54:51.631Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:51.631Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:51.631Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets/af6704d3-6aba-4611-bcee-b2ec12434e20 [none]
+[debug] [2025-11-20T10:54:52.044Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets/af6704d3-6aba-4611-bcee-b2ec12434e20 200
+[debug] [2025-11-20T10:54:52.044Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets/af6704d3-6aba-4611-bcee-b2ec12434e20 [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2025-11-20T10:54:52.046Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:52.046Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:52.047Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets [none]
+[debug] [2025-11-20T10:54:52.047Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets [omitted]
+[debug] [2025-11-20T10:54:52.941Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets 200
+[debug] [2025-11-20T10:54:52.941Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets {"name":"projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43","source":{"files":[{"content":"rules_version = '2';\r\nservice cloud.firestore {\r\n  match /databases/{database}/documents {\r\n\r\n    // Users collection: Allow authenticated users to read and write only their own documents\r\n    match /users/{userId} {\r\n      allow read, write: if request.auth != null && request.auth.uid == userId;\r\n    }\r\n\r\n    // Drivers collection: Allow read for testing, write for testing\r\n    match /drivers/{driverId} {\r\n      allow read: if true; // Allow reads for testing\r\n      allow write: if true; // Allow writes for testing\r\n    }\r\n\r\n    // Rides collection: Allow authenticated users to create rides, drivers to update status\r\n    match /rides/{rideId} {\r\n      allow create: if request.auth != null;\r\n      allow read: if request.auth != null;\r\n      allow update: if request.auth != null;\r\n      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;\r\n    }\r\n\r\n    // Ride history collection: Allow authenticated users to read/write their own history\r\n    match /rideHistory/{historyId} {\r\n      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;\r\n    }\r\n\r\n    // Messages collection: Allow authenticated users to read/write messages for rides they're part of\r\n    match /messages/{messageId} {\r\n      allow read, write: if request.auth != null;\r\n    }\r\n\r\n    // Notifications collection: Allow authenticated users to read/write their own notifications\r\n    match /notifications/{notificationId} {\r\n      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;\r\n    }\r\n\r\n    // Default deny rule\r\n    match /{document=**} {\r\n      allow read, write: if false;\r\n    }\r\n  }\r\n}\r\n","name":"firestore.rules"}]},"createTime":"2025-11-20T10:54:51.942991Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2025-11-20T10:54:52.941Z] [rules] created ruleset projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43
+[debug] [2025-11-20T10:54:52.942Z] [rules] releasing cloud.firestore/(default) with ruleset projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43
+[debug] [2025-11-20T10:54:52.943Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:52.944Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:54:52.944Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) [none]
+[debug] [2025-11-20T10:54:52.944Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) {"release":{"name":"projects/helpbus-b7124/releases/cloud.firestore/(default)","rulesetName":"projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43"}}
+[debug] [2025-11-20T10:54:53.523Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) 200
+[debug] [2025-11-20T10:54:53.523Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) {"name":"projects/helpbus-b7124/releases/cloud.firestore","rulesetName":"projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43","createTime":"2025-11-18T10:26:11.614564Z","updateTime":"2025-11-20T10:54:52.444535Z"}
+[debug] [2025-11-20T10:54:53.523Z] [rules] updated release projects/helpbus-b7124/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/helpbus-b7124/overview
+[debug] [2025-11-20T10:59:17.909Z] ----------------------------------------------------------------------
+[debug] [2025-11-20T10:59:17.916Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\DELLL\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore:rules
+[debug] [2025-11-20T10:59:17.917Z] CLI Version:   14.25.0
+[debug] [2025-11-20T10:59:17.918Z] Platform:      win32
+[debug] [2025-11-20T10:59:17.918Z] Node Version:  v22.13.0
+[debug] [2025-11-20T10:59:17.919Z] Time:          Thu Nov 20 2025 11:59:17 GMT+0100 (West Africa Standard Time)
+[debug] [2025-11-20T10:59:17.919Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-20T10:59:18.296Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-20T10:59:18.297Z] > authorizing via signed-in user (marvellousabiola08@gmail.com)
+[debug] [2025-11-20T10:59:18.298Z] [iam] checking project helpbus-b7124 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2025-11-20T10:59:18.304Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:18.305Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:18.307Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions [none]
+[debug] [2025-11-20T10:59:18.308Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions x-goog-quota-user=projects/helpbus-b7124
+[debug] [2025-11-20T10:59:18.308Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2025-11-20T10:59:19.792Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions 200
+[debug] [2025-11-20T10:59:19.793Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/helpbus-b7124:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'helpbus-b7124'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2025-11-20T10:59:19.800Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:19.800Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:19.801Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/helpbus-b7124/databases/(default) [none]
+[debug] [2025-11-20T10:59:20.916Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/helpbus-b7124/databases/(default) 200
+[debug] [2025-11-20T10:59:20.916Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/helpbus-b7124/databases/(default) {"name":"projects/helpbus-b7124/databases/(default)","uid":"4688c898-34e7-42ec-b2e8-4a70a8a0619d","createTime":"2025-11-18T10:26:05.697492Z","updateTime":"2025-11-18T10:26:05.697492Z","locationId":"nam5","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-11-20T09:59:19.870292Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"s","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IJ/r+LXJgJEDMLCzz5rG+5AD"}
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-11-20T10:59:20.919Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:20.919Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:20.919Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test [none]
+[debug] [2025-11-20T10:59:20.919Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test [omitted]
+[debug] [2025-11-20T10:59:21.895Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test 200
+[debug] [2025-11-20T10:59:21.895Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-11-20T10:59:21.898Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:21.898Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:21.899Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases pageSize=10&pageToken=
+[debug] [2025-11-20T10:59:22.675Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases 200
+[debug] [2025-11-20T10:59:22.676Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases {"releases":[{"name":"projects/helpbus-b7124/releases/cloud.firestore","rulesetName":"projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43","createTime":"2025-11-18T10:26:11.614564Z","updateTime":"2025-11-20T10:54:52.444535Z"}]}
+[debug] [2025-11-20T10:59:22.676Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:22.676Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:22.676Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43 [none]
+[debug] [2025-11-20T10:59:23.463Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43 200
+[debug] [2025-11-20T10:59:23.463Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets/10a7d6ac-1061-497b-8844-21bcc02dcc43 [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2025-11-20T10:59:23.466Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:23.466Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:23.466Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets [none]
+[debug] [2025-11-20T10:59:23.466Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets [omitted]
+[debug] [2025-11-20T10:59:24.194Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets 200
+[debug] [2025-11-20T10:59:24.194Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/rulesets {"name":"projects/helpbus-b7124/rulesets/e72a94b9-1230-4b35-b3d0-0d2f64375bfe","source":{"files":[{"content":"rules_version = '2';\r\nservice cloud.firestore {\r\n  match /databases/{database}/documents {\r\n\r\n    // Users collection: Allow authenticated users to read and write only their own documents\r\n    match /users/{userId} {\r\n      allow read, write: if request.auth != null && request.auth.uid == userId;\r\n    }\r\n\r\n    // Drivers collection: Allow read for testing, write for testing\r\n    match /drivers/{driverId} {\r\n      allow read: if true; // Allow reads for testing\r\n      allow write: if true; // Allow writes for testing\r\n    }\r\n\r\n    // Rides collection: Allow authenticated users to create rides, drivers to update status\r\n    match /rides/{rideId} {\r\n      allow create: if request.auth != null;\r\n      allow read: if request.auth != null;\r\n      allow update: if request.auth != null;\r\n      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;\r\n    }\r\n\r\n    // Ride history collection: Allow authenticated users to read/write their own history\r\n    match /rideHistory/{historyId} {\r\n      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;\r\n    }\r\n\r\n    // Messages collection: Allow authenticated users to read/write messages for rides they're part of\r\n    match /messages/{messageId} {\r\n      allow read, write: if request.auth != null;\r\n    }\r\n\r\n    // Notifications collection: Allow authenticated users to read their own notifications, write any\r\n    match /notifications/{notificationId} {\r\n      allow read: if request.auth != null && request.auth.uid == resource.data.userId;\r\n      allow write: if request.auth != null;\r\n    }\r\n\r\n    // Default deny rule\r\n    match /{document=**} {\r\n      allow read, write: if false;\r\n    }\r\n  }\r\n}\r\n","name":"firestore.rules"}]},"createTime":"2025-11-20T10:59:23.007519Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2025-11-20T10:59:24.195Z] [rules] created ruleset projects/helpbus-b7124/rulesets/e72a94b9-1230-4b35-b3d0-0d2f64375bfe
+[debug] [2025-11-20T10:59:24.195Z] [rules] releasing cloud.firestore/(default) with ruleset projects/helpbus-b7124/rulesets/e72a94b9-1230-4b35-b3d0-0d2f64375bfe
+[debug] [2025-11-20T10:59:24.196Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:24.196Z] Checked if tokens are valid: true, expires at: 1763639685785
+[debug] [2025-11-20T10:59:24.196Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) [none]
+[debug] [2025-11-20T10:59:24.196Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) {"release":{"name":"projects/helpbus-b7124/releases/cloud.firestore/(default)","rulesetName":"projects/helpbus-b7124/rulesets/e72a94b9-1230-4b35-b3d0-0d2f64375bfe"}}
+[debug] [2025-11-20T10:59:25.107Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) 200
+[debug] [2025-11-20T10:59:25.107Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/helpbus-b7124/releases/cloud.firestore/(default) {"name":"projects/helpbus-b7124/releases/cloud.firestore","rulesetName":"projects/helpbus-b7124/rulesets/e72a94b9-1230-4b35-b3d0-0d2f64375bfe","createTime":"2025-11-18T10:26:11.614564Z","updateTime":"2025-11-20T10:59:24.131538Z"}
+[debug] [2025-11-20T10:59:25.107Z] [rules] updated release projects/helpbus-b7124/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/helpbus-b7124/overview

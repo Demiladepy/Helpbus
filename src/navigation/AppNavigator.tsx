@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text } from 'react-native';
-import { RootStackParamList } from '../types';
+import { RootStackParamList, HomeStackParamList, BookingStackParamList, TripHistoryStackParamList, ProfileStackParamList, DriverStackParamList, Location, Ride } from '../types';
 import { useAuth } from '../context/AuthContext';
 import AuthNavigator from './AuthNavigator';
 import HomeScreen from '../screens/HomeScreen';
@@ -15,15 +15,22 @@ import AccessibilityScreen from '../screens/AccessibilityScreen';
 import DriverDashboard from '../screens/DriverDashboard';
 import DriverSettingsScreen from '../screens/DriverSettingsScreen';
 import PaymentScreen from '../screens/PaymentScreen';
+import DriverSelectionScreen from '../screens/DriverSelectionScreen';
 import { Ionicons } from '@expo/vector-icons';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+// Param lists are defined in types/index.ts
+
+const HomeStackNavigator = createNativeStackNavigator<HomeStackParamList>();
+const BookingStackNavigator = createNativeStackNavigator<BookingStackParamList>();
+const TripHistoryStackNavigator = createNativeStackNavigator<TripHistoryStackParamList>();
+const ProfileStackNavigator = createNativeStackNavigator<ProfileStackParamList>();
+const DriverStackNavigator = createNativeStackNavigator<DriverStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 // Home Stack
 function HomeStack() {
   return (
-    <Stack.Navigator
+    <HomeStackNavigator.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: '#4F46E5' },
         headerTintColor: '#fff',
@@ -31,16 +38,16 @@ function HomeStack() {
         headerShadowVisible: true,
       }}
     >
-      <Stack.Screen name="HomeMain" component={HomeScreen} options={{ title: 'Mobility' }} />
-      <Stack.Screen name="Accessibility" component={AccessibilityScreen} options={{ title: 'Accessibility Settings' }} />
-    </Stack.Navigator>
+      <HomeStackNavigator.Screen name="HomeMain" component={HomeScreen} options={{ title: 'Mobility' }} />
+      <HomeStackNavigator.Screen name="Accessibility" component={AccessibilityScreen} options={{ title: 'Accessibility Settings' }} />
+    </HomeStackNavigator.Navigator>
   );
 }
 
 // Booking Stack
 function BookingStack() {
   return (
-    <Stack.Navigator
+    <BookingStackNavigator.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: '#4F46E5' },
         headerTintColor: '#fff',
@@ -48,17 +55,18 @@ function BookingStack() {
         headerShadowVisible: true,
       }}
     >
-      <Stack.Screen name="BookingMain" component={BookingScreen} options={{ title: 'Book a Ride' }} />
-      <Stack.Screen name="Payment" component={PaymentScreen} options={{ title: 'Payment' }} />
-      <Stack.Screen name="Trip" component={TripScreen} options={{ title: 'Your Trip', headerBackVisible: false }} />
-    </Stack.Navigator>
+      <BookingStackNavigator.Screen name="BookingMain" component={BookingScreen} options={{ title: 'Book a Ride' }} />
+      <BookingStackNavigator.Screen name="DriverSelection" component={DriverSelectionScreen} options={{ title: 'Select Driver' }} />
+      <BookingStackNavigator.Screen name="Payment" component={PaymentScreen} options={{ title: 'Payment' }} />
+      <BookingStackNavigator.Screen name="Trip" component={TripScreen} options={{ title: 'Your Trip', headerBackVisible: false }} />
+    </BookingStackNavigator.Navigator>
   );
 }
 
 // Trip History Stack
 function TripHistoryStack() {
   return (
-    <Stack.Navigator
+    <TripHistoryStackNavigator.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: '#4F46E5' },
         headerTintColor: '#fff',
@@ -66,16 +74,16 @@ function TripHistoryStack() {
         headerShadowVisible: true,
       }}
     >
-      <Stack.Screen name="TripHistoryMain" component={TripHistoryScreen} options={{ title: 'Trip History' }} />
-      <Stack.Screen name="Trip" component={TripScreen} options={{ title: 'Your Trip', headerBackVisible: false }} />
-    </Stack.Navigator>
+      <TripHistoryStackNavigator.Screen name="TripHistoryMain" component={TripHistoryScreen} options={{ title: 'Trip History' }} />
+      <TripHistoryStackNavigator.Screen name="Trip" component={TripScreen} options={{ title: 'Your Trip', headerBackVisible: false }} />
+    </TripHistoryStackNavigator.Navigator>
   );
 }
 
 // Profile Stack
 function ProfileStack() {
   return (
-    <Stack.Navigator
+    <ProfileStackNavigator.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: '#4F46E5' },
         headerTintColor: '#fff',
@@ -83,16 +91,16 @@ function ProfileStack() {
         headerShadowVisible: true,
       }}
     >
-      <Stack.Screen name="ProfileMain" component={ProfileScreen} options={{ title: 'Profile & Settings' }} />
-      <Stack.Screen name="Accessibility" component={AccessibilityScreen} options={{ title: 'Accessibility Settings' }} />
-    </Stack.Navigator>
+      <ProfileStackNavigator.Screen name="ProfileMain" component={ProfileScreen} options={{ title: 'Profile & Settings' }} />
+      <ProfileStackNavigator.Screen name="Accessibility" component={AccessibilityScreen} options={{ title: 'Accessibility Settings' }} />
+    </ProfileStackNavigator.Navigator>
   );
 }
 
 // Driver Stack
 function DriverStack() {
   return (
-    <Stack.Navigator
+    <DriverStackNavigator.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: '#4F46E5' },
         headerTintColor: '#fff',
@@ -100,10 +108,10 @@ function DriverStack() {
         headerShadowVisible: true,
       }}
     >
-      <Stack.Screen name="DriverDashboardMain" component={DriverDashboard} options={{ title: 'Driver Dashboard' }} />
-      <Stack.Screen name="Trip" component={TripScreen} options={{ title: 'Current Trip', headerBackVisible: false }} />
-      <Stack.Screen name="DriverSettings" component={DriverSettingsScreen} options={{ title: 'Driver Settings' }} />
-    </Stack.Navigator>
+      <DriverStackNavigator.Screen name="DriverDashboardMain" component={DriverDashboard} options={{ title: 'Driver Dashboard' }} />
+      <DriverStackNavigator.Screen name="Trip" component={TripScreen} options={{ title: 'Current Trip', headerBackVisible: false }} />
+      <DriverStackNavigator.Screen name="DriverSettings" component={DriverSettingsScreen} options={{ title: 'Driver Settings' }} />
+    </DriverStackNavigator.Navigator>
   );
 }
 

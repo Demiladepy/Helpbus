@@ -1,5 +1,5 @@
-import { db, functions, storage } from '../config/firebase';
-import { collection, doc, getDoc, setDoc, updateDoc, query, where, getDocs, onSnapshot, addDoc, orderBy } from 'firebase/firestore';
+import { db, functions, storage, auth } from '../config/firebase';
+import { collection, doc, getDoc, setDoc, updateDoc, query, where, getDocs, onSnapshot, addDoc, orderBy, GeoPoint } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as Notifications from 'expo-notifications';
@@ -36,9 +36,12 @@ export class FirebaseService {
   }
 
   static async getAvailableDrivers(): Promise<Driver[]> {
+    console.log('Fetching available drivers');
     const q = query(collection(db, 'drivers'), where('availability', '==', true));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => doc.data() as Driver);
+    const drivers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Driver));
+    console.log('Available drivers found:', drivers.length);
+    return drivers;
   }
 
   static async updateDriverLocation(driverId: string, location: Location): Promise<void> {
@@ -88,16 +91,87 @@ export class FirebaseService {
     }
   }
 
-  // Ride operations using Cloud Functions
+  // Ride operations using direct Firestore operations
   static async bookRide(rideData: {
     pickupLocation: Ride['pickup'];
     dropoffLocation: Ride['dropoff'];
     accessibilityOptions?: string[];
     scheduledTime?: Date;
+    userId: string;
   }): Promise<{ rideId: string; status: string }> {
-    const bookRideFunction = httpsCallable(functions, 'bookRide');
-    const result = await bookRideFunction(rideData);
-    return result.data as { rideId: string; status: string };
+    console.log('bookRide called with rideData:', rideData);
+    console.log('Auth current user:', auth.currentUser);
+
+    // Calculate distance using Haversine formula
+    const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    };
+
+    // Calculate fare based on distance and estimated time
+    const calculateFare = (distance: number, estimatedTimeHours: number): number => {
+      const baseFare = 5; // Base fare in currency units
+      const perKmRate = 2; // Rate per km
+      const perMinuteRate = 0.5; // Rate per minute
+      const estimatedTimeMinutes = estimatedTimeHours * 60;
+      return baseFare + (distance * perKmRate) + (estimatedTimeMinutes * perMinuteRate);
+    };
+
+    const distance = calculateDistance(
+      rideData.pickupLocation.latitude,
+      rideData.pickupLocation.longitude,
+      rideData.dropoffLocation.latitude,
+      rideData.dropoffLocation.longitude
+    );
+    const estimatedTimeHours = distance / 30; // Assuming average speed of 30 km/h
+    const fare = calculateFare(distance, estimatedTimeHours);
+
+    console.log('Calculated distance:', distance, 'fare:', fare);
+
+    // Convert accessibility options array to object format
+    const accessibilityObj = {
+      wheelchair: (rideData.accessibilityOptions || []).includes('wheelchair'),
+      entrySide: (rideData.accessibilityOptions || []).find((opt: string) => ['left', 'right', 'either'].includes(opt)) || 'either',
+      assistance: (rideData.accessibilityOptions || []).includes('assistance'),
+    };
+
+    console.log('Accessibility obj:', accessibilityObj);
+
+    const rideRef = doc(collection(db, 'rides'));
+    const ride = {
+      userId: rideData.userId,
+      pickup: {
+        geopoint: new GeoPoint(rideData.pickupLocation.latitude, rideData.pickupLocation.longitude),
+        address: rideData.pickupLocation.address,
+      },
+      dropoff: {
+        geopoint: new GeoPoint(rideData.dropoffLocation.latitude, rideData.dropoffLocation.longitude),
+        address: rideData.dropoffLocation.address,
+      },
+      status: 'searching',
+      fare,
+      accessibilityOptions: accessibilityObj,
+      scheduledTime: rideData.scheduledTime || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    console.log('Attempting to setDoc with ride:', ride);
+
+    try {
+      await setDoc(rideRef, ride);
+      console.log('setDoc successful, rideId:', rideRef.id);
+      return { rideId: rideRef.id, status: 'searching' };
+    } catch (error) {
+      console.error('setDoc failed:', error);
+      throw error;
+    }
   }
 
   static async updateRideStatus(rideId: string, status: Ride['status']): Promise<void> {

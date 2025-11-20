@@ -17,10 +17,8 @@ service cloud.firestore {
     match /rides/{rideId} {
       allow create: if request.auth != null;
       allow read: if request.auth != null;
-      allow update: if request.auth != null && 
-        (request.auth.uid == resource.data.passengerId || 
-         request.auth.uid == resource.data.driverId);
-      allow delete: if request.auth != null && request.auth.uid == resource.data.passengerId;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
 
     // Ride history collection: Allow authenticated users to read/write their own history
@@ -33,9 +31,10 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
 
-    // Notifications collection: Allow authenticated users to read/write their own notifications
+    // Notifications collection: Allow authenticated users to read their own notifications, write any
     match /notifications/{notificationId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if request.auth != null;
     }
 
     // Default deny rule

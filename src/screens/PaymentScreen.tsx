@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';
+import { BookingStackParamList } from '../types';
 import { FirebaseService } from '../services/firebaseService';
 import { useAuth } from '../context/AuthContext';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Payment'>;
+type Props = NativeStackScreenProps<BookingStackParamList, 'Payment'>;
 
 export default function PaymentScreen({ navigation, route }: Props) {
-  const { fare = 0, pickup, dropoff } = route.params || {};
+  const { fare = 0, pickup, dropoff, rideId, driverId } = route.params || {};
   const { user } = useAuth();
 
   const [name, setName] = useState(user?.name || 'Test User');
@@ -18,8 +18,8 @@ export default function PaymentScreen({ navigation, route }: Props) {
   const [loading, setLoading] = useState(false);
 
   const handlePay = async () => {
-    if (!pickup || !dropoff) {
-      Alert.alert('Missing info', 'Pickup or dropoff not provided.');
+    if (!rideId) {
+      Alert.alert('Missing info', 'Ride ID not provided.');
       return;
     }
 
@@ -32,9 +32,10 @@ export default function PaymentScreen({ navigation, route }: Props) {
         const paymentSuccess = true;
         if (!paymentSuccess) throw new Error('Payment failed');
 
-        // Book the ride now that payment is "confirmed"
-        const result = await FirebaseService.bookRide({ pickupLocation: pickup, dropoffLocation: dropoff, accessibilityOptions: [] });
-        const ride = await FirebaseService.getRide(result.rideId);
+        Alert.alert('Paid Successfully');
+
+        // Get the ride details
+        const ride = await FirebaseService.getRide(rideId);
 
         setLoading(false);
 
@@ -42,12 +43,12 @@ export default function PaymentScreen({ navigation, route }: Props) {
           // Navigate directly to Trip view to show the assignment
           navigation.navigate('Trip', { ride });
         } else {
-          Alert.alert('Booked', 'Payment succeeded and ride was booked. Returning to bookings.');
+          Alert.alert('Error', 'Failed to load ride details.');
           navigation.navigate('BookingMain');
         }
       } catch (err: any) {
         setLoading(false);
-        Alert.alert('Error', err?.message || 'Payment or booking failed');
+        Alert.alert('Error', err?.message || 'Payment failed');
       }
     }, 1400);
   };

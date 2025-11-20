@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MapView from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { RootStackParamList, Location as LocationType, Ride, Driver } from '../types';
+import { BookingStackParamList, Location as LocationType, Ride, Driver } from '../types';
 import { useAccessibility } from '../context/AccessibilityContext';
 import { useAuth } from '../context/AuthContext';
 import MapViewComponent from '../components/MapViewComponent';
@@ -20,7 +20,7 @@ interface GeoapifyResult {
   formatted: string;
 }
 
-type BookingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Booking'>;
+type BookingScreenNavigationProp = NativeStackNavigationProp<BookingStackParamList, 'BookingMain'>;
 
 interface Props {
   navigation: BookingScreenNavigationProp;
@@ -195,11 +195,11 @@ export default function BookingScreen({ navigation }: Props) {
 
     if (selectionMode === 'pickup') {
       setPickup(location);
-      setSelectionMode('dropoff');
     } else if (selectionMode === 'dropoff') {
       setDropoff(location);
-      setSelectionMode(null);
     }
+
+    setSelectionMode(null);
 
     setMapRegion({
       latitude: coordinate.latitude,
@@ -266,13 +266,45 @@ export default function BookingScreen({ navigation }: Props) {
     }
   }, [pickup, dropoff]);
 
-  // Find driver: navigate to mock Payment screen first
-  const handleFindDriver = () => {
+  // Find driver: create ride and navigate to DriverSelection
+  const handleFindDriver = async () => {
     if (!pickup || !dropoff) {
       Alert.alert('Incomplete Selection', 'Please select both pickup and dropoff locations.');
       return;
     }
-    navigation.navigate('Payment', { fare: estimatedFare, pickup, dropoff });
+    console.log('User authenticated:', !!user, 'User ID:', user?.id);
+    try {
+      const accessibilityOptions: string[] = [];
+      if (wheelchair) accessibilityOptions.push('wheelchair');
+      if (assistance) accessibilityOptions.push('assistance');
+      if (entrySide !== 'either') accessibilityOptions.push(`entry_${entrySide}`);
+
+      console.log('Calling bookRide with:', {
+        pickupLocation: pickup,
+        dropoffLocation: dropoff,
+        accessibilityOptions
+      });
+
+      const result = await FirebaseService.bookRide({
+        pickupLocation: pickup,
+        dropoffLocation: dropoff,
+        accessibilityOptions,
+        userId: user!.id
+      });
+
+      console.log('bookRide result:', result);
+
+      navigation.navigate('DriverSelection', {
+        rideId: result.rideId,
+        fare: estimatedFare,
+        pickup,
+        dropoff,
+        accessibilityOptions
+      });
+    } catch (error) {
+      console.error('Error booking ride:', error);
+      Alert.alert('Error', 'Failed to book ride. Please try again.');
+    }
   };
 
 
@@ -398,7 +430,7 @@ export default function BookingScreen({ navigation }: Props) {
         <View style={styles.handle} />
 
         <View style={styles.locationButtonsContainer}>
-          <TouchableOpacity style={[styles.locationButton, pickup ? styles.locationButtonEnabled : styles.locationButtonDisabled]} onPress={getCurrentLocation}>
+          <TouchableOpacity style={[styles.locationButton, pickup ? styles.locationButtonEnabled : styles.locationButtonDisabled]} onPress={() => { setSelectionMode('pickup'); searchInputRef.current?.focus(); }}>
             <Ionicons name="location-outline" size={20} color={pickup ? "#FFF" : "#6B7280"} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flex:1}}>
               <Text style={[styles.locationButtonText, { color: pickup ? "#FFF" : "#6B7280" }]}>{pickup ? pickup.address : 'Select Pickup Location'}</Text>

@@ -65,7 +65,7 @@ export const bookRide = functions.https.onCall(async (data: any, context: any) =
       userId: context.auth.uid,
       pickup,
       dropoff,
-      status: 'pending',
+      status: 'searching',
       fare,
       accessibilityOptions: accessibilityObj,
       scheduledTime: scheduledTime ? new Date(scheduledTime) : null, // Supports hybrid on-demand (null for immediate) and scheduled rides
@@ -76,39 +76,7 @@ export const bookRide = functions.https.onCall(async (data: any, context: any) =
     await rideRef.set(ride);
     console.log(`Ride created with ID: ${rideRef.id}`);
 
-    // Vehicle accessibility matching logic
-    // Filter drivers whose vehicles have all required accessibility features
-    const driversRef = admin.firestore().collection('drivers');
-    const availableDriversQuery = driversRef.where('availability', '==', true);
-    const availableDrivers = await availableDriversQuery.get();
-
-    let matchingDrivers: any[] = [];
-    availableDrivers.forEach(doc => {
-      const driverData = doc.data();
-      const driverFeatures = driverData.vehicle?.accessibilityFeatures || [];
-
-      // Check if driver has all required features
-      const hasAllFeatures = (accessibilityOptions || []).every((feature: string) => {
-        if (feature === 'either') return true; // 'either' means any entry side is acceptable
-        return driverFeatures.includes(feature);
-      });
-
-      if (hasAllFeatures) {
-        matchingDrivers.push(doc);
-      }
-    });
-
-    if (matchingDrivers.length > 0) {
-      // Assign the first matching driver (simple logic; can be improved)
-      const driverDoc = matchingDrivers[0];
-      await rideRef.update({ driverId: driverDoc.id, status: 'assigned' });
-      console.log(`Driver ${driverDoc.id} assigned to ride ${rideRef.id}`);
-    } else {
-      console.warn('No matching drivers found for accessibility options');
-      // Keep status as 'pending' or trigger notification for manual assignment
-    }
-
-    return { rideId: rideRef.id, status: 'pending' };
+    return { rideId: rideRef.id, status: 'searching' };
   } catch (error) {
     console.error('Error booking ride:', error);
     throw new functions.https.HttpsError('internal', 'Failed to book ride');
