@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Alert, ActivityIndicator } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,18 +23,49 @@ interface Props {
 const { height } = Dimensions.get('window');
 
 export default function TripScreen({ navigation, route }: Props) {
-  const { ride: initialRide } = route.params;
+  const { ride: initialRide, rideId } = route.params;
   const { getFontSize, getColor, highContrast } = useAccessibility();
   const { user } = useAuth();
 
-  const [ride, setRide] = useState(initialRide);
-  const [currentStatus, setCurrentStatus] = useState(initialRide.status);
+  const [ride, setRide] = useState<Ride | null>(initialRide || null);
+  const [currentStatus, setCurrentStatus] = useState(initialRide?.status || 'searching');
   const [progress, setProgress] = useState(0);
   const [chatVisible, setChatVisible] = useState(false);
+  const [mapRegion, setMapRegion] = useState<any>(
+    initialRide?.pickup
+      ? {
+          latitude: initialRide.pickup.latitude,
+          longitude: initialRide.pickup.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }
+      : null
+  );
+  const [loading, setLoading] = useState(!initialRide && !!rideId);
   const progressAnim = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
-    const unsubscribe = FirebaseService.listenToRideUpdates(initialRide.id, async (updatedRide) => {
+    if (rideId && !initialRide) {
+      const fetchRide = async () => {
+        try {
+          const fetchedRide = await FirebaseService.getRide(rideId);
+          if (fetchedRide) {
+            setRide(fetchedRide);
+            setCurrentStatus(fetchedRide.status);
+          }
+        } catch (error) {
+          console.error('Error fetching ride:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchRide();
+    }
+  }, [rideId, initialRide]);
+
+  useEffect(() => {
+    if (!ride) return;
+    const unsubscribe = FirebaseService.listenToRideUpdates(ride.id, async (updatedRide) => {
       if (updatedRide) {
         const prevStatus = currentStatus;
         setRide(updatedRide);
@@ -85,17 +116,27 @@ export default function TripScreen({ navigation, route }: Props) {
     });
 
     return unsubscribe;
-  }, [initialRide.id, user, currentStatus]);
+  }, [ride?.id, user, currentStatus]);
 
   useEffect(() => {
-    const unsubscribe = FirebaseService.listenToDriverLocation(initialRide.id, (location) => {
+    if (!ride) return;
+    const unsubscribe = FirebaseService.listenToDriverLocation(ride.id, (location) => {
       if (location && ride.driver) {
         setRide((prev) => prev ? { ...prev, driver: { ...prev.driver!, location } } : prev);
+        // Update map region to follow driver during active trip
+        if (currentStatus === 'assigned' || currentStatus === 'arriving' || currentStatus === 'in-progress') {
+          setMapRegion({
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          });
+        }
       }
     });
 
     return unsubscribe;
-  }, [initialRide.id, ride.driver]);
+  }, [ride?.id, ride?.driver, currentStatus]);
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -105,7 +146,7 @@ export default function TripScreen({ navigation, route }: Props) {
     }).start();
   }, [progress]);
 
-  const getStatusInfo = () => {
+  const getStatusInfo = (ride: Ride) => {
     switch (currentStatus) {
       case 'assigned':
         return {
@@ -145,21 +186,22 @@ export default function TripScreen({ navigation, route }: Props) {
     }
   };
 
-  const statusInfo = getStatusInfo();
+  const statusInfo = ride ? getStatusInfo(ride) : { icon: 'time', title: 'Error', subtitle: 'Error', color: '#6B7280' };
 
   const handleCompleteTrip = () => {
     navigation.navigate('Home');
   };
 
   const handleStatusUpdate = async (newStatus: Ride['status']) => {
+    if (!ride) return;
     try {
       await FirebaseService.updateRideStatus(ride.id, newStatus);
       // Send notification to the other party
       const recipientId = user?.role === 'driver' ? ride.customerId : ride.driverId!;
       const notificationType = newStatus === 'arriving' ? 'status_update' :
-                              newStatus === 'in-progress' ? 'status_update' : 'status_update';
+                               newStatus === 'in-progress' ? 'status_update' : 'status_update';
       const body = newStatus === 'arriving' ? 'Driver has arrived' :
-                   newStatus === 'in-progress' ? 'Ride has started' : 'Ride completed';
+                    newStatus === 'in-progress' ? 'Ride has started' : 'Ride completed';
       await FirebaseService.sendNotification({
         userId: recipientId,
         title: 'Ride Update',
@@ -172,6 +214,15 @@ export default function TripScreen({ navigation, route }: Props) {
     }
   };
 
+  if (loading || !ride) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#4F46E5" />
+        <Text style={{ marginTop: 16, fontSize: getFontSize(16) }}>Loading trip details...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Map Section */}
@@ -182,6 +233,7 @@ export default function TripScreen({ navigation, route }: Props) {
           driverLocation={ride.driver?.location}
           editable={false}
           showRoute
+          region={mapRegion}
         />
         
         {/* Status Banner */}

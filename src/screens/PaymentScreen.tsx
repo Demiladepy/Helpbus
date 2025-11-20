@@ -40,8 +40,8 @@ export default function PaymentScreen({ navigation, route }: Props) {
         setLoading(false);
 
         if (ride) {
-          // Navigate directly to Trip view to show the assignment
-          navigation.navigate('Trip', { ride });
+          // Navigate to Trip view with rideId to fetch fresh data
+          navigation.navigate('Trip', { rideId });
         } else {
           Alert.alert('Error', 'Failed to load ride details.');
           navigation.navigate('BookingMain');

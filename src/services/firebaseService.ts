@@ -192,14 +192,47 @@ export class FirebaseService {
     const rideDoc = await getDoc(doc(db, 'rides', rideId));
     if (!rideDoc.exists()) return null;
 
-    const rideData = rideDoc.data() as Ride;
-    const ride: Ride = { ...rideData, id: rideDoc.id };
+    const rideData = rideDoc.data() as any; // Firestore data structure
+    const ride: Ride = {
+      id: rideDoc.id,
+      pickup: {
+        latitude: rideData.pickup.geopoint.latitude,
+        longitude: rideData.pickup.geopoint.longitude,
+        address: rideData.pickup.address,
+      },
+      dropoff: {
+        latitude: rideData.dropoff.geopoint.latitude,
+        longitude: rideData.dropoff.geopoint.longitude,
+        address: rideData.dropoff.address,
+      },
+      driverId: rideData.driverId,
+      status: rideData.status,
+      accessibilityOptions: rideData.accessibilityOptions,
+      fare: rideData.fare,
+      customerId: rideData.userId, // Map userId to customerId
+      createdAt: rideData.createdAt.toDate(),
+      updatedAt: rideData.updatedAt.toDate(),
+    };
 
     // Populate driver if driverId exists
     if (ride.driverId) {
       const driverDoc = await getDoc(doc(db, 'drivers', ride.driverId));
       if (driverDoc.exists()) {
-        ride.driver = driverDoc.data() as Driver;
+        const driverData = driverDoc.data() as any;
+        ride.driver = {
+          id: driverDoc.id,
+          name: driverData.name,
+          photo: driverData.photo,
+          rating: driverData.rating,
+          vehicle: driverData.vehicle,
+          location: {
+            latitude: driverData.location.geopoint.latitude,
+            longitude: driverData.location.geopoint.longitude,
+            address: driverData.location.address,
+          },
+          eta: 0, // Placeholder, can be calculated if needed
+          availability: driverData.availability,
+        };
       }
     }
 

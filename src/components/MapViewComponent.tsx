@@ -66,7 +66,7 @@ export default function MapViewComponent({
         onPress={(e) => onMapPress?.(e.nativeEvent.coordinate)}
       >
         {/* ✅ Pickup Marker */}
-        {pickup && (
+        {pickup && typeof pickup.latitude === 'number' && typeof pickup.longitude === 'number' && (
           <Marker
             coordinate={{
               latitude: pickup.latitude,
@@ -87,7 +87,7 @@ export default function MapViewComponent({
         )}
 
         {/* ✅ Drop-off Marker */}
-        {dropoff && (
+        {dropoff && typeof dropoff.latitude === 'number' && typeof dropoff.longitude === 'number' && (
           <Marker
             coordinate={{
               latitude: dropoff.latitude,
@@ -108,7 +108,7 @@ export default function MapViewComponent({
         )}
 
         {/* ✅ Driver Marker */}
-        {driverLocation && (
+        {driverLocation && typeof driverLocation.latitude === 'number' && typeof driverLocation.longitude === 'number' && (
           <Marker
             coordinate={{
               latitude: driverLocation.latitude,

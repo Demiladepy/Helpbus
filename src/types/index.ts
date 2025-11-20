@@ -150,7 +150,7 @@ export type BookingStackParamList = {
   BookingMain: undefined;
   DriverSelection: { rideId?: string; accessibilityOptions?: string[]; fare: number; pickup: Location; dropoff: Location };
   Payment: { fare: number; pickup?: Location; dropoff?: Location; rideId: string; driverId: string } | undefined;
-  Trip: { ride: Ride };
+  Trip: { ride?: Ride; rideId?: string };
 };
 
 export type TripHistoryStackParamList = {
@@ -175,7 +175,7 @@ export type RootStackParamList = {
   Booking: undefined;
   BookingMain: undefined;
   Payment: { fare: number; pickup?: Location; dropoff?: Location } | undefined;
-  Trip: { ride: Ride };
+  Trip: { ride?: Ride; rideId?: string };
   TripHistory: undefined;
   TripHistoryMain: undefined;
   Profile: undefined;
