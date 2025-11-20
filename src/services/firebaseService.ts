@@ -3,6 +3,7 @@ import { collection, doc, getDoc, setDoc, updateDoc, query, where, getDocs, onSn
 import { httpsCallable } from 'firebase/functions';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { User, Driver, DriverDocumentData, Ride, Message, NotificationData, Location } from '../types';
 
 export class FirebaseService {
@@ -374,6 +375,15 @@ export class FirebaseService {
   }
 
   static async scheduleLocalNotification(title: string, body: string): Promise<void> {
+    // Check if notifications are supported (not available in Expo Go on Android SDK 53+)
+    try {
+      await Notifications.getDevicePushTokenAsync();
+    } catch (error) {
+      console.log('FirebaseService.scheduleLocalNotification: Notifications not supported, skipping:', error);
+      return; // Silently skip if not supported
+    }
+
+    console.log('FirebaseService.scheduleLocalNotification: Scheduling notification');
     await Notifications.scheduleNotificationAsync({
       content: {
         title,

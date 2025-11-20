@@ -121,7 +121,7 @@ export default function TripScreen({ navigation, route }: Props) {
   useEffect(() => {
     if (!ride) return;
     const unsubscribe = FirebaseService.listenToDriverLocation(ride.id, (location) => {
-      if (location && ride.driver) {
+      if (location && ride.driver && typeof location.latitude === 'number' && typeof location.longitude === 'number') {
         setRide((prev) => prev ? { ...prev, driver: { ...prev.driver!, location } } : prev);
         // Update map region to follow driver during active trip
         if (currentStatus === 'assigned' || currentStatus === 'arriving' || currentStatus === 'in-progress') {
@@ -223,6 +223,15 @@ export default function TripScreen({ navigation, route }: Props) {
     );
   }
 
+  // Determine if the driver location should be shown
+  const shouldShowDriver =
+    currentStatus !== 'searching' &&
+    currentStatus !== 'cancelled' &&
+    currentStatus !== 'completed';
+
+  // Pass the driver location conditionally
+  const visibleDriverLocation = shouldShowDriver ? ride.driver?.location : undefined;
+
   return (
     <View style={styles.container}>
       {/* Map Section */}
@@ -230,7 +239,7 @@ export default function TripScreen({ navigation, route }: Props) {
         <MapViewComponent
           pickup={ride.pickup}
           dropoff={ride.dropoff}
-          driverLocation={ride.driver?.location}
+          driverLocation={visibleDriverLocation}
           editable={false}
           showRoute
           region={mapRegion}

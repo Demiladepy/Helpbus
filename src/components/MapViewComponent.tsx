@@ -47,7 +47,13 @@ export default function MapViewComponent({
 
   // ✅ Safe route drawing (only when both points are valid)
   const routeCoordinates =
-    pickup && dropoff && showRoute
+    pickup &&
+    dropoff &&
+    showRoute &&
+    typeof pickup.latitude === 'number' &&
+    typeof pickup.longitude === 'number' &&
+    typeof dropoff.latitude === 'number' &&
+    typeof dropoff.longitude === 'number'
       ? [
           { latitude: pickup.latitude, longitude: pickup.longitude },
           { latitude: dropoff.latitude, longitude: dropoff.longitude },
