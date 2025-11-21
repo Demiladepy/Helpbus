@@ -393,22 +393,27 @@ export class FirebaseService {
     driver: Driver;
     createdAt: Date;
   }): Promise<void> {
+    console.log('FirebaseService.saveRideHistory: Saving for userId:', userId, 'rideId:', rideData.rideId);
     const historyRef = doc(collection(db, 'rideHistory'));
     await setDoc(historyRef, {
       userId,
       ...rideData,
       updatedAt: new Date(),
     });
+    console.log('FirebaseService.saveRideHistory: Saved successfully');
   }
 
   static async getRideHistory(userId: string): Promise<any[]> {
+    console.log('FirebaseService.getRideHistory: Fetching for userId:', userId);
     const q = query(
       collection(db, 'rideHistory'),
       where('userId', '==', userId),
       orderBy('createdAt', 'desc')
     );
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const history = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log('FirebaseService.getRideHistory: Found', history.length, 'records');
+    return history;
   }
 
   static async scheduleLocalNotification(title: string, body: string): Promise<void> {

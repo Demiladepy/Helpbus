@@ -97,7 +97,9 @@ export default function TripScreen({ navigation, route }: Props) {
             }
             // Save ride history when completed
             if (updatedRide.driver && user) {
+              console.log('TripScreen: Saving ride history for user:', user.id, 'role:', user.role);
               try {
+                // Save for the current user (customer or driver)
                 await FirebaseService.saveRideHistory(user.id, {
                   rideId: updatedRide.id,
                   pickup: updatedRide.pickup,
@@ -106,6 +108,34 @@ export default function TripScreen({ navigation, route }: Props) {
                   driver: updatedRide.driver,
                   createdAt: updatedRide.createdAt,
                 });
+                console.log('TripScreen: Ride history saved for user:', user.id);
+
+                // Also save for the other party if not already
+                let otherUserId: string | null = null;
+                if (user.role === 'customer') {
+                  // Get driver's userId from driver document
+                  const { doc, getDoc } = await import('firebase/firestore');
+                  const { db } = await import('../config/firebase');
+                  const driverDoc = await getDoc(doc(db, 'drivers', updatedRide.driverId!));
+                  if (driverDoc.exists()) {
+                    const driverData = driverDoc.data() as any;
+                    otherUserId = driverData.userId;
+                  }
+                } else {
+                  otherUserId = updatedRide.customerId;
+                }
+                if (otherUserId && otherUserId !== user.id) {
+                  console.log('TripScreen: Saving ride history for other user:', otherUserId);
+                  await FirebaseService.saveRideHistory(otherUserId, {
+                    rideId: updatedRide.id,
+                    pickup: updatedRide.pickup,
+                    dropoff: updatedRide.dropoff,
+                    fare: updatedRide.fare || 0,
+                    driver: updatedRide.driver,
+                    createdAt: updatedRide.createdAt,
+                  });
+                  console.log('TripScreen: Ride history saved for other user:', otherUserId);
+                }
               } catch (error) {
                 console.error('Error saving ride history:', error);
               }

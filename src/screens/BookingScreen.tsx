@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions, ActivityIndicator, TextInput, FlatList, Alert, Animated, Platform } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -79,6 +80,34 @@ export default function BookingScreen({ navigation }: Props) {
     useEffect(() => {
       console.log('searchResults updated:', searchResults);
     }, [searchResults]);
+
+    // Reset booking states when screen comes into focus
+    useFocusEffect(
+      React.useCallback(() => {
+        console.log('BookingScreen: Screen focused, resetting states');
+        setSelectionMode('pickup');
+        setPickup(null);
+        setDropoff(null);
+        setMapRegion(undefined);
+        setWheelchair(false);
+        setEntrySide('either');
+        setAssistance(false);
+        setIsSearching(false);
+        setDriver(null);
+        setRideId(null);
+        setWaitingForDriver(false);
+        setDistance(0);
+        setEstimatedFare(0);
+        setEstimatedTime(0);
+        setSearchQuery('');
+        setSearchResults([]);
+        setLoadingSearch(false);
+        setSearchError(null);
+        setRecentLocations([]);
+        setNearbySuggestions([]);
+        setCurrentLocation(null);
+      }, [])
+    );
   
     // Load recent locations
     useEffect(() => {
