@@ -183,10 +183,12 @@ export class FirebaseService {
   }
 
   static async cancelRide(rideId: string): Promise<void> {
+    console.log('FirebaseService.cancelRide called for rideId:', rideId);
     await updateDoc(doc(db, 'rides', rideId), {
       status: 'cancelled',
       updatedAt: new Date(),
     });
+    console.log('FirebaseService.cancelRide successful for rideId:', rideId);
   }
 
   static async getRide(rideId: string): Promise<Ride | null> {
@@ -305,9 +307,58 @@ export class FirebaseService {
   }
 
   static listenToRideUpdates(rideId: string, callback: (ride: Ride | null) => void): () => void {
-    return onSnapshot(doc(db, 'rides', rideId), (doc) => {
-      if (doc.exists()) {
-        callback({ id: doc.id, ...doc.data() } as Ride);
+    return onSnapshot(doc(db, 'rides', rideId), async (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const rideData = docSnapshot.data() as any;
+        const ride: Ride = {
+          id: docSnapshot.id,
+          pickup: {
+            latitude: rideData.pickup.geopoint.latitude,
+            longitude: rideData.pickup.geopoint.longitude,
+            address: rideData.pickup.address,
+          },
+          dropoff: {
+            latitude: rideData.dropoff.geopoint.latitude,
+            longitude: rideData.dropoff.geopoint.longitude,
+            address: rideData.dropoff.address,
+          },
+          driverId: rideData.driverId,
+          status: rideData.status,
+          accessibilityOptions: rideData.accessibilityOptions,
+          fare: rideData.fare,
+          customerId: rideData.userId,
+          createdAt: rideData.createdAt.toDate(),
+          updatedAt: rideData.updatedAt.toDate(),
+        };
+
+        // Populate driver if driverId exists
+        if (ride.driverId) {
+          try {
+            const driverRef = doc(db, 'drivers', ride.driverId);
+            const driverDoc = await getDoc(driverRef);
+            if (driverDoc.exists()) {
+              const driverData = driverDoc.data() as any;
+              ride.driver = {
+                id: driverDoc.id,
+                name: driverData.name,
+                photo: driverData.photo,
+                rating: driverData.rating,
+                vehicle: driverData.vehicle,
+                location: {
+                  latitude: driverData.location.geopoint.latitude,
+                  longitude: driverData.location.geopoint.longitude,
+                  address: driverData.location.address,
+                },
+                eta: 0,
+                availability: driverData.availability,
+              };
+            }
+          } catch (error) {
+            console.error('Error fetching driver in listenToRideUpdates:', error);
+          }
+        }
+
+        callback(ride);
       } else {
         callback(null);
       }
@@ -390,30 +441,75 @@ export class FirebaseService {
     pickup: Location;
     dropoff: Location;
     fare: number;
-    driver: Driver;
+    driver?: Driver | null;
     createdAt: Date;
   }): Promise<void> {
     console.log('FirebaseService.saveRideHistory: Saving for userId:', userId, 'rideId:', rideData.rideId);
-    const historyRef = doc(collection(db, 'rideHistory'));
-    await setDoc(historyRef, {
-      userId,
-      ...rideData,
-      updatedAt: new Date(),
-    });
-    console.log('FirebaseService.saveRideHistory: Saved successfully');
+    try {
+      console.log('FirebaseService.saveRideHistory: Original rideData.driver:', rideData.driver);
+      // Clean the driver object to remove undefined values
+      const cleanedRideData = {
+        ...rideData,
+        driver: rideData.driver ? {
+          id: rideData.driver.id || '',
+          name: rideData.driver.name || '',
+          photo: rideData.driver.photo || null,
+          rating: rideData.driver.rating || 0,
+          vehicle: rideData.driver.vehicle ? {
+            make: rideData.driver.vehicle.make || '',
+            model: rideData.driver.vehicle.model || '',
+            color: rideData.driver.vehicle.color || '',
+            plate: rideData.driver.vehicle.plate || '',
+            accessibilityFeatures: rideData.driver.vehicle.accessibilityFeatures || [],
+          } : null,
+          location: rideData.driver.location ? {
+            latitude: rideData.driver.location.latitude || 0,
+            longitude: rideData.driver.location.longitude || 0,
+            address: rideData.driver.location.address || null,
+          } : null,
+          eta: rideData.driver.eta || 0,
+          availability: rideData.driver.availability || false,
+        } : null,
+      };
+      console.log('FirebaseService.saveRideHistory: Cleaned driver:', cleanedRideData.driver);
+
+      const dataToSave = {
+        userId,
+        ...cleanedRideData,
+        updatedAt: new Date(),
+      };
+      console.log('FirebaseService.saveRideHistory: Data to save:', dataToSave);
+
+      const historyRef = doc(collection(db, 'rideHistory'));
+      await setDoc(historyRef, dataToSave);
+      console.log('FirebaseService.saveRideHistory: Saved successfully for userId:', userId);
+    } catch (error) {
+      console.error('FirebaseService.saveRideHistory: Error saving:', error);
+      throw error;
+    }
   }
 
   static async getRideHistory(userId: string): Promise<any[]> {
     console.log('FirebaseService.getRideHistory: Fetching for userId:', userId);
-    const q = query(
-      collection(db, 'rideHistory'),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
-    );
-    const querySnapshot = await getDocs(q);
-    const history = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log('FirebaseService.getRideHistory: Found', history.length, 'records');
-    return history;
+    try {
+      const q = query(
+        collection(db, 'rideHistory'),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+      console.log('FirebaseService.getRideHistory: Executing query with filter');
+      const querySnapshot = await getDocs(q);
+      console.log('FirebaseService.getRideHistory: Query successful, docs count:', querySnapshot.docs.length);
+      const history = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      console.log('FirebaseService.getRideHistory: Found', history.length, 'records for userId:', userId);
+      if (history.length > 0) {
+        console.log('FirebaseService.getRideHistory: Sample record:', history[0]);
+      }
+      return history;
+    } catch (error) {
+      console.error('FirebaseService.getRideHistory: Error fetching history:', error);
+      throw error;
+    }
   }
 
   static async scheduleLocalNotification(title: string, body: string): Promise<void> {

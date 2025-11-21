@@ -82,30 +82,35 @@ export default function BookingScreen({ navigation }: Props) {
     }, [searchResults]);
 
     // Reset booking states when screen comes into focus
+    const resetBookingStates = () => {
+      console.log('BookingScreen: Resetting states');
+      setSelectionMode('pickup');
+      setPickup(null);
+      setDropoff(null);
+      setMapRegion(undefined);
+      setWheelchair(false);
+      setEntrySide('either');
+      setAssistance(false);
+      setIsSearching(false);
+      setDriver(null);
+      setRideId(null);
+      setWaitingForDriver(false);
+      setDistance(0);
+      setEstimatedFare(0);
+      setEstimatedTime(0);
+      setSearchQuery('');
+      setSearchResults([]);
+      setLoadingSearch(false);
+      setSearchError(null);
+      setRecentLocations([]);
+      setNearbySuggestions([]);
+      setCurrentLocation(null);
+    };
+
     useFocusEffect(
       React.useCallback(() => {
         console.log('BookingScreen: Screen focused, resetting states');
-        setSelectionMode('pickup');
-        setPickup(null);
-        setDropoff(null);
-        setMapRegion(undefined);
-        setWheelchair(false);
-        setEntrySide('either');
-        setAssistance(false);
-        setIsSearching(false);
-        setDriver(null);
-        setRideId(null);
-        setWaitingForDriver(false);
-        setDistance(0);
-        setEstimatedFare(0);
-        setEstimatedTime(0);
-        setSearchQuery('');
-        setSearchResults([]);
-        setLoadingSearch(false);
-        setSearchError(null);
-        setRecentLocations([]);
-        setNearbySuggestions([]);
-        setCurrentLocation(null);
+        resetBookingStates();
       }, [])
     );
   
@@ -320,9 +325,12 @@ export default function BookingScreen({ navigation }: Props) {
               driverId: ride.driverId
             });
           } else if (ride.status === 'cancelled') {
+            console.log('BookingScreen: Ride status changed to cancelled, resetting states. rideId:', rideId);
             setWaitingForDriver(false);
             setRideId(null);
             Alert.alert('Ride Cancelled', 'Your ride request was cancelled.');
+          } else {
+            console.log('BookingScreen: Ride status update:', ride.status, 'for rideId:', rideId);
           }
         }
       });
@@ -373,18 +381,26 @@ export default function BookingScreen({ navigation }: Props) {
 
 
   const handleCancelRequest = async () => {
-    if (!rideId) return;
+    console.log('BookingScreen: handleCancelRequest called, rideId:', rideId, 'waitingForDriver:', waitingForDriver);
+    if (!rideId) {
+      console.log('BookingScreen: No rideId, returning');
+      return;
+    }
+    console.log('BookingScreen: Showing cancel request alert');
     Alert.alert('Cancel Ride Request', 'Are you sure you want to cancel your ride request?', [
-      { text: 'No' },
+      { text: 'No', onPress: () => console.log('BookingScreen: User cancelled cancel action') },
       {
         text: 'Yes',
         onPress: async () => {
+          console.log('BookingScreen: User confirmed cancel, calling cancelRide');
           try {
+            console.log('BookingScreen: Calling cancelRide for rideId:', rideId);
             await FirebaseService.cancelRide(rideId);
-            setWaitingForDriver(false);
-            setRideId(null);
+            console.log('BookingScreen: cancelRide successful, resetting states');
+            resetBookingStates();
             Alert.alert('Request Cancelled', 'Your ride request has been cancelled.');
           } catch (error) {
+            console.log('BookingScreen: cancelRide failed:', error);
             Alert.alert('Error', 'Failed to cancel ride request.');
           }
         }

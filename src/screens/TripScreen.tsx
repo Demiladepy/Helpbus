@@ -92,14 +92,16 @@ export default function TripScreen({ navigation, route }: Props) {
             break;
           case 'completed':
             setProgress(100);
+            console.log('TripScreen: Status changed to completed for ride:', updatedRide.id, 'user role:', user?.role);
             if (user?.role === 'customer' && prevStatus !== 'completed') {
               await FirebaseService.scheduleLocalNotification('Ride Completed', 'Thank you for riding with us!');
             }
             // Save ride history when completed
-            if (updatedRide.driver && user) {
-              console.log('TripScreen: Saving ride history for user:', user.id, 'role:', user.role);
+            if (user) {
+              console.log('TripScreen: Attempting to save ride history for user:', user.id, 'role:', user.role, 'rideId:', updatedRide.id);
               try {
                 // Save for the current user (customer or driver)
+                console.log('TripScreen: Saving for current user:', user.id);
                 await FirebaseService.saveRideHistory(user.id, {
                   rideId: updatedRide.id,
                   pickup: updatedRide.pickup,
@@ -108,21 +110,26 @@ export default function TripScreen({ navigation, route }: Props) {
                   driver: updatedRide.driver,
                   createdAt: updatedRide.createdAt,
                 });
-                console.log('TripScreen: Ride history saved for user:', user.id);
+                console.log('TripScreen: Ride history saved successfully for user:', user.id);
 
                 // Also save for the other party if not already
                 let otherUserId: string | null = null;
                 if (user.role === 'customer') {
                   // Get driver's userId from driver document
+                  console.log('TripScreen: Fetching driver doc for driverId:', updatedRide.driverId);
                   const { doc, getDoc } = await import('firebase/firestore');
                   const { db } = await import('../config/firebase');
                   const driverDoc = await getDoc(doc(db, 'drivers', updatedRide.driverId!));
                   if (driverDoc.exists()) {
                     const driverData = driverDoc.data() as any;
                     otherUserId = driverData.userId;
+                    console.log('TripScreen: Found driver userId:', otherUserId, 'driverData:', driverData);
+                  } else {
+                    console.log('TripScreen: Driver document not found for driverId:', updatedRide.driverId);
                   }
                 } else {
                   otherUserId = updatedRide.customerId;
+                  console.log('TripScreen: Other userId (customer):', otherUserId);
                 }
                 if (otherUserId && otherUserId !== user.id) {
                   console.log('TripScreen: Saving ride history for other user:', otherUserId);
@@ -134,11 +141,15 @@ export default function TripScreen({ navigation, route }: Props) {
                     driver: updatedRide.driver,
                     createdAt: updatedRide.createdAt,
                   });
-                  console.log('TripScreen: Ride history saved for other user:', otherUserId);
+                  console.log('TripScreen: Ride history saved successfully for other user:', otherUserId);
+                } else {
+                  console.log('TripScreen: Skipping save for other user, otherUserId:', otherUserId, 'user.id:', user.id);
                 }
               } catch (error) {
-                console.error('Error saving ride history:', error);
+                console.error('TripScreen: Error saving ride history:', error);
               }
+            } else {
+              console.log('TripScreen: Skipping history save - driver:', !!updatedRide.driver, 'user:', !!user, 'user.role:', user?.role);
             }
             break;
         }
@@ -219,9 +230,12 @@ export default function TripScreen({ navigation, route }: Props) {
   const statusInfo = ride ? getStatusInfo(ride) : { icon: 'time', title: 'Error', subtitle: 'Error', color: '#6B7280' };
 
   const handleCompleteTrip = () => {
+    console.log('TripScreen: handleCompleteTrip called, user role:', user?.role);
     if (user?.role === 'driver') {
-      navigation.navigate('DriverDashboard');
+      console.log('TripScreen: Navigating to DriverDashboardMain');
+      navigation.navigate('DriverDashboardMain');
     } else {
+      console.log('TripScreen: Navigating to Home');
       navigation.navigate('Home');
     }
   };
@@ -409,21 +423,28 @@ export default function TripScreen({ navigation, route }: Props) {
               </Text>
               <Ionicons name="home" size={20} color="#FFF" />
             </TouchableOpacity>
-          ) : user?.role === 'customer' && currentStatus !== 'in-progress' ? (
+          ) : user?.role === 'customer' && currentStatus !== 'completed' ? (
             <TouchableOpacity
               style={styles.cancelButton}
-              onPress={() => Alert.alert('Cancel Ride', 'Are you sure you want to cancel this ride?', [
-                { text: 'No' },
-                { text: 'Yes', onPress: async () => {
-                  try {
-                    await FirebaseService.cancelRide(ride.id);
-                    navigation.goBack();
-                    Alert.alert('Ride Cancelled', 'Your ride has been cancelled.');
-                  } catch (error) {
-                    Alert.alert('Error', 'Failed to cancel ride.');
-                  }
-                }}
-              ])}
+              onPress={() => {
+                console.log('TripScreen: Cancel ride button pressed, ride.id:', ride.id, 'currentStatus:', currentStatus, 'user.role:', user?.role);
+                Alert.alert('Cancel Ride', 'Are you sure you want to cancel this ride?', [
+                  { text: 'No', onPress: () => console.log('TripScreen: User cancelled cancel action') },
+                  { text: 'Yes', onPress: async () => {
+                    console.log('TripScreen: User confirmed cancel, calling cancelRide');
+                    try {
+                      console.log('TripScreen: Calling cancelRide for ride.id:', ride.id);
+                      await FirebaseService.cancelRide(ride.id);
+                      console.log('TripScreen: cancelRide successful, navigating to Booking');
+                      navigation.navigate('BookingMain');
+                      Alert.alert('Ride Cancelled', 'Your ride has been cancelled.');
+                    } catch (error) {
+                      console.log('TripScreen: cancelRide failed:', error);
+                      Alert.alert('Error', 'Failed to cancel ride.');
+                    }
+                  }}
+                ]);
+              }}
               activeOpacity={0.85}
             >
               <Text style={[styles.cancelButtonText, { fontSize: getFontSize(16) }]}>Cancel Ride</Text>

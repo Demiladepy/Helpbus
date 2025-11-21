@@ -28,6 +28,7 @@ export default function TripHistoryScreen({ navigation }: Props) {
         setError(null);
         const history = await FirebaseService.getRideHistory(user.id);
         console.log('TripHistoryScreen: Fetched history count:', history.length);
+        console.log('TripHistoryScreen: Raw history data:', history);
         // Convert to Ride format
         const rideHistory: Ride[] = history.map(item => ({
           id: item.rideId,
@@ -42,7 +43,7 @@ export default function TripHistoryScreen({ navigation }: Props) {
           updatedAt: item.updatedAt.toDate(),
         }));
         setTrips(rideHistory);
-        console.log('TripHistoryScreen: Set trips:', rideHistory.length);
+        console.log('TripHistoryScreen: Set trips:', rideHistory.length, 'trips:', rideHistory.map(t => ({ id: t.id, fare: t.fare, createdAt: t.createdAt })));
       } catch (error) {
         console.error('Error fetching ride history:', error);
         setError('Failed to load ride history. Please try again.');
