@@ -6,7 +6,12 @@ export default ({ config }) => ({
   slug: "mobility",
   version: "1.0.0",
   android: { package: "com.anonymous.accessibletransportsystem" },
-  ios: { bundleIdentifier: "com.anonymous.accessibletransportsystem" },
+  ios: {
+    bundleIdentifier: "com.anonymous.accessibletransportsystem",
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false
+    }
+  },
   web: { googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY },
   updates: { url: "https://u.expo.dev/d4495b37-b565-4693-8340-d54709fd0806" },
   runtimeVersion: { policy: "appVersion" },

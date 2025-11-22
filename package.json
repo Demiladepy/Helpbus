@@ -39,6 +39,7 @@
   "devDependencies": {
     "@types/expo__vector-icons": "^9.0.1",
     "@types/react": "~19.1.0",
+    "react-native-dotenv": "^3.4.11",
     "typescript": "~5.9.2"
   },
   "private": true
