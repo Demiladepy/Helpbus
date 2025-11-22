@@ -8,11 +8,14 @@ export default {
     android: {
       package: "com.anonymous.accessibletransportsystem"
     },
+     ios: {
+    bundleIdentifier: "com.anonymous.accessibletransportsystem"
+  },
     web: {
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
     },
   updates: {
-    url: "https://u.expo.dev/539082f4-4a98-42cb-9616-e7d606f100c0"
+    url: "https://u.expo.dev/d4495b37-b565-4693-8340-d54709fd0806"
   },
   runtimeVersion: {
     policy: "appVersion"
